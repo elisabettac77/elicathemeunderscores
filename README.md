@@ -1,5 +1,11 @@
 [![Build Status](https://travis-ci.org/Automattic/_s.svg?branch=master)](https://travis-ci.org/Automattic/_s)
 
+This theme is derived from Underscores
+
+Changelog: added card-template-part.php, reworked archive.php, added cards folder and _card.scss files
+
+Part of the JustInTime course in software programming by Kleis Formazione - exercise project during stage.
+
 _s
 ===
 
