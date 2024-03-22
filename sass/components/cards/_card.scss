@@ -3,6 +3,16 @@
 // Import the mixins file
 @import '../_mixins';
 
+// Import the columns file
+@import "../abstracts/variables/_columns.scss";
+
+/*
+Add stykes for card column class here and uncomment
+.card-column {
+
+}
+*/
+// Card Styles
 .card {
     background-color: #fff0e6;
     border: 2px solid #12345b;
