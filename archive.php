@@ -20,24 +20,18 @@ get_header();
 			the_archive_title('<h1 class="page-title">', '</h1>');
 			the_archive_description('<div class="archive-description">', '</div>');
 			?>
-		</header><!-- .page-header -->
-
-		<div class="card-container"> <!-- Add a container for cards -->
+		</header>
+		<div class="card-columns">
 			<?php
-			/* Start the Loop */
 			while (have_posts()) :
 				the_post();
-
-				// Include your custom card template part
 				get_template_part('template-parts/card', 'template-part');
-
 			endwhile;
+			wp_reset_postdata(); // Reset after the loop
 			?>
-		</div> <!-- .card-container -->
+		</div> <?php the_posts_navigation(); ?>
 
 	<?php
-		the_posts_navigation();
-
 	else :
 
 		get_template_part('template-parts/content', 'none');
@@ -45,9 +39,7 @@ get_header();
 	endif;
 	?>
 
-</main><!-- #main -->
-
-<?php
-get_sidebar();
-get_footer();
-?>
+</main><?php
+		get_sidebar();
+		get_footer();
+		?>
