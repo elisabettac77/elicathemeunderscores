@@ -7,7 +7,19 @@ $columns: (
 	6: 16.66%,
 	7: 14.28%,
 	8: 12.5%,
-	9: 11.11%
+	9: 11.11%,
 );
 
 $columns__margin: 3.8%;
+
+@mixin set-card-columns($columns) {
+	@for $i from 1 through $columns {
+		&:nth-child(#{$i * n + 1}) {
+			width: (100% / $columns);
+			float: left;
+			margin-left: calc((100% / $columns) * -1);
+			padding: 0 calc((100% / $columns) / 6);
+			/* Adjust padding as needed */
+		}
+	}
+}
