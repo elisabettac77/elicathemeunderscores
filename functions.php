@@ -288,3 +288,185 @@ function display_portfolio_grid($atts)
 	}
 	return $output;
 }
+
+// Register Custom Post Type - Services
+add_action('init', 'register_services_cpt');
+
+function register_services_cpt()
+{
+	$labels = array(
+		'name'                => __('Services'),
+		'singular_name'       => __('Service'),
+		'menu_name'           => __('Services'),
+		'parent_item_colon'   => __('Parent Service:'),
+		'all_items'           => __('All Services'),
+		'view_item'           => __('View Service'),
+		'add_new_item'        => __('Add New Service'),
+		'add_new'             => __('Add New'),
+		'edit_item'           => __('Edit Service'),
+		'update_item'         => __('Update Service'),
+		'search_items'        => __('Search Services'),
+		'not_found'           => __('No Services Found'),
+		'not_found_in_trash'  => __('No Services Found in Trash'),
+	);
+
+	$args = array(
+		'label'               => __('services'),
+		'description'         => __('Custom post type for services'),
+		'labels'              => $labels,
+		'supports'            => array('title', 'editor', 'thumbnail'),
+		'public'              => true,
+		'has_archive'         => true,
+		'rewrite'             => array('slug' => 'services'),
+		'menu_icon'           => 'dashicons-portfolio',
+		'show_in_rest'        => true, // Enable REST API for Services
+	);
+
+	register_post_type('services', $args);
+}
+
+// Register Non-Hierarchical Taxonomy for Services - Service Categories
+add_action('init', 'register_service_categories_taxonomy');
+
+function register_service_categories_taxonomy()
+{
+	$labels = array(
+		'name'                       => __('Service Categories'),
+		'singular_name'              => __('Service Category'),
+		'search_items'               => __('Search Service Categories'),
+		'all_items'                  => __('All Service Categories'),
+		'edit_item'                  => __('Edit Service Category'),
+		'update_item'                => __('Update Service Category'),
+		'add_new_item'               => __('Add New Service Category'),
+		'new_item_name'              => __('New Service Category Name'),
+		'menu_name'                  => __('Service Categories'),
+	);
+
+	$args = array(
+		'hierarchical'               => false, // Set to false for non-hierarchical taxonomy
+		'labels'                     => $labels,
+		'show_ui'                    => true,
+		'show_in_menu'               => true, // Show in the "Services" menu
+		'singular_slug'              => 'service-category', // Slug for individual terms
+		'rewrite'                    => array('slug' => 'service-category'), // URL structure for terms
+	);
+
+	register_taxonomy('service_category', array('services'), $args); // Associate taxonomy with "services" CPT
+}
+
+// Register Non-Hierarchical Taxonomy for Services - Service Tags
+add_action('init', 'register_service_tags_taxonomy');
+
+function register_service_tags_taxonomy()
+{
+	$labels = array(
+		'name'                       => __('Service Tags'),
+		'singular_name'              => __('Service Tag'),
+		'search_items'               => __('Search Service Tags'),
+		'all_items'                  => __('All Service Tags'),
+		'edit_item'                  => __('Edit Service Tag'),
+		'update_item'                => __('Update Service Tag'),
+		'add_new_item'               => __('Add New Service Tag'),
+		'new_item_name'              => __('New Service Tag Name'),
+		'menu_name'                  => __('Service Tags'),
+	);
+
+	$args = array(
+		'hierarchical'               => false, // Set to false for non-hierarchical taxonomy
+		'labels'                     => $labels,
+		'show_ui'                    => true,
+		'show_in_menu'               => true, // Show in the "Services" menu
+		'singular_slug'              => 'service-tag', // Slug for individual terms
+		'rewrite'                    => array('slug' => 'service-tag'), // URL structure for terms
+	);
+
+	register_taxonomy('service_tag', array('services'), $args); // Associate taxonomy with "services" CPT
+}
+
+// Register Custom Metaboxes for Services
+add_action('add_meta_boxes', 'register_services_metaboxes');
+
+function register_services_metaboxes()
+{
+	add_meta_box(
+		'service_details', // Unique ID for the metabox
+		__('Service Details'), // Title displayed above the metabox
+		'render_service_details_metabox', // Callback function to display metabox content
+		'services', // Post type where the metabox should appear (services)
+		'normal', // Context where the metabox should appear (normal)
+		'high' // Priority (high, default, low)
+	);
+}
+
+// Render Service Details Metabox Content
+function render_service_details_metabox($post)
+{
+	// Retrieve existing values for fields
+	$service_icon = get_post_meta($post->ID, 'service_icon', true);
+	$service_price = get_post_meta($post->ID, 'service_price', true);
+	$service_button_text = get_post_meta($post->ID, 'service_button_text', true);
+	$service_button_link = get_post_meta($post->ID, 'service_button_link', true);
+?>
+	<p>
+		<label for="service_icon"><?php esc_html_e('Icon (Dashicon Code):'); ?></label>
+		<input type="text" name="service_icon" id="service_icon" value="<?php echo esc_attr($service_icon); ?>" />
+	</p>
+	<p>
+		<label for="service_price"><?php esc_html_e('Price:'); ?></label>
+		<input type="number" name="service_price" id="service_price" value="<?php echo esc_attr($service_price); ?>" />
+		<select name="currency">
+			<option value="USD">USD</option>
+			<option value="EUR">EUR</option>
+			<!-- Add more currency options as needed -->
+		</select>
+	</p>
+	<p>
+		<label for="service_button_text"><?php esc_html_e('Button Text:'); ?></label>
+		<input type="text" name="service_button_text" id="service_button_text" value="<?php echo esc_attr($service_button_text); ?>" />
+	</p>
+	<p>
+		<label for="service_button_link"><?php esc_html_e('Button Link:'); ?></label>
+		<input type="url" name="service_button_link" id="service_button_link" value="<?php echo esc_url($service_button_link); ?>" />
+	</p>
+<?php
+}
+
+// Save Service Details
+add_action('save_post', 'save_service_details');
+
+function save_service_details($post_id)
+{
+	// Check if nonce is set
+	if (!isset($_POST['service_details_nonce'])) {
+		return;
+	}
+
+	// Verify nonce
+	if (!wp_verify_nonce($_POST['service_details_nonce'], basename(__FILE__))) {
+		return;
+	}
+
+	// Check if autosave
+	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+		return;
+	}
+
+	// Check permissions
+	if (!current_user_can('edit_post', $post_id)) {
+		return;
+	}
+
+	// Save custom fields
+	if (isset($_POST['service_icon'])) {
+		update_post_meta($post_id, 'service_icon', sanitize_text_field($_POST['service_icon']));
+	}
+	if (isset($_POST['service_price'])) {
+		update_post_meta($post_id, 'service_price', sanitize_text_field($_POST['service_price']));
+	}
+	if (isset($_POST['service_button_text'])) {
+		update_post_meta($post_id, 'service_button_text', sanitize_text_field($_POST['service_button_text']));
+	}
+	if (isset($_POST['service_button_link'])) {
+		update_post_meta($post_id, 'service_button_link', esc_url_raw($_POST['service_button_link']));
+	}
+}
