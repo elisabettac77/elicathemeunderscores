@@ -25,7 +25,7 @@ get_header();
 			<?php
 			while (have_posts()) :
 				the_post();
-				get_template_part('template-parts/post-card', 'template-part');
+				get_template_part('template-parts/service-card', 'template-part');
 			endwhile;
 			wp_reset_postdata(); // Reset after the loop
 			?>

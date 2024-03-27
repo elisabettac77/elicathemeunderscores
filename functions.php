@@ -84,6 +84,25 @@ function elicathemeunderscores_setup()
 			'flex-height' => true,
 		)
 	);
+
+	/*
+		 * Enable support for Post Formats.
+		 *
+		 * See: https://codex.wordpress.org/Post_Formats
+		 */
+	add_theme_support(
+		'post-formats',
+		array(
+			'aside',
+			'image',
+			'video',
+			'quote',
+			'link',
+			'gallery',
+			'status',
+			'audio',
+		)
+	);
 }
 add_action('after_setup_theme', 'elicathemeunderscores_setup');
 
@@ -199,13 +218,29 @@ function register_portfolio_cpt()
 
 	register_post_type('portfolio', $args);
 }
-add_action('admin_menu', 'register_portfolio_meta_box');
+
+// Register custom fields (optional, but provides some benefits)
+add_action('init', 'register_portfolio_custom_fields');
+
+function register_portfolio_custom_fields()
+{
+	$args = array(
+		'type' => 'string',
+		'single' => true,
+		'show_in_rest' => true, // Optional: Allow editing through REST API
+	);
+	register_meta('post', 'portfolio_website_link', $args);
+	register_meta('post', 'portfolio_customer', $args);
+}
+
+// Register the metabox
+add_action('add_meta_boxes', 'register_portfolio_meta_box');
 
 function register_portfolio_meta_box()
 {
 	add_meta_box(
 		'portfolio_link_meta_box',
-		__('Client Website Link'),
+		__('Project Information'),
 		'display_portfolio_link_meta_box',
 		'portfolio',
 		'normal',
@@ -217,9 +252,52 @@ function display_portfolio_link_meta_box($post)
 {
 ?>
 	<label for="portfolio_website_link">Client Website Link:</label>
-	<input type="url" id="portfolio_website_link" name="portfolio_website_link" value="<?php echo get_post_meta($post->ID, 'portfolio_website_link', true); ?>">
+	<input type="url" id="portfolio_website_link" name="portfolio_website_link" value="<?php echo esc_url(get_post_meta($post->ID, 'portfolio_website_link', true)); ?>">
+
+	<h2><?php esc_html_e('Project Customer'); ?></h2>
+	<label for="portfolio_customer">Customer Name:</label>
+	<input type="text" id="portfolio_customer" name="portfolio_customer" value="<?php echo esc_attr(get_post_meta($post->ID, 'portfolio_customer', true)); ?>">
+
 <?php
 }
+
+// Save the custom field data with sanitisation and validation
+add_action('save_post', 'save_portfolio_meta_data', 10, 2); // Priority 10, second parameter is post object
+
+function save_portfolio_meta_data($post_id, $post)
+{
+
+	// Check autosave
+	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+		return;
+	}
+
+	// Check permissions
+	if (!current_user_can('edit_post', $post_id)) {
+		return;
+	}
+
+	// Sanitize and validate client website link (check if key exists first)
+	$website_link = '';
+	if (isset($_POST['portfolio_website_link'])) {
+		$website_link = sanitize_url($_POST['portfolio_website_link']);
+		if (!filter_var($website_link, FILTER_VALIDATE_URL)) {
+			$website_link = ''; // Set to empty string if not a valid URL
+			add_action('admin_notices', function () {
+				echo '<div class="error"><p>Invalid website link provided.</p></div>';
+			});
+		}
+	}
+	update_post_meta($post_id, 'portfolio_website_link', $website_link);
+
+	// Sanitize customer name (check if key exists first)
+	$customer_name = '';
+	if (isset($_POST['portfolio_customer'])) {
+		$customer_name = sanitize_text_field($_POST['portfolio_customer']);
+	}
+	update_post_meta($post_id, 'portfolio_customer', $customer_name);
+}
+
 
 add_action('init', 'register_portfolio_taxonomies');
 
@@ -256,37 +334,6 @@ function register_portfolio_taxonomies()
 	);
 
 	register_taxonomy('portfolio-category', array('portfolio'), $args);
-}
-
-add_shortcode('portfolio', 'display_portfolio_grid');
-
-function display_portfolio_grid($atts)
-{
-
-	$args = array(
-		'post_type' => 'portfolio',
-	);
-
-	$query = new WP_Query($args);
-
-	$output = '';
-	if ($query->have_posts()) {
-		$output .= '<div class="portfolio-grid">'; // Container for the grid
-		while ($query->have_posts()) {
-			$query->the_post();
-			$output .= '<div class="portfolio-item">'; // Each item element
-			$output .= '<a href="' . get_the_permalink() . '">'; // Wrap in link to single portfolio page
-			$output .= get_the_post_thumbnail('', 'portfolio-thumb'); // Featured image
-			$output .= '<h3>' . get_the_title() . '</h3>'; // Title
-			$output .= '</a>';
-			$output .= '</div>';
-		}
-		$output .= '</div>';
-		wp_reset_postdata();
-	} else {
-		$output = '<p>No portfolio items found.</p>';
-	}
-	return $output;
 }
 
 // Register Custom Post Type - Services
