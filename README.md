@@ -1,10 +1,13 @@
 [![Build Status](https://travis-ci.org/Automattic/_s.svg?branch=master)](https://travis-ci.org/Automattic/_s)
 
 This theme is derived from Underscores
-
-Changelog: added card-template-part.php, reworked archive.php, added cards folder and _card.scss files
-
 Part of the JustInTime course in software programming by Kleis Formazione - exercise project during stage.
+
+CHANGELOG:
+
+- add post format support
+- add services and portfolio CPTs with taxonomies and custom fields with metaboxes
+- add templates for post, services and portfolio cards, and for portfolio, services, archive, portfolio archive and services archive.
 
 _s
 ===
