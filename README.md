@@ -1,5 +1,53 @@
 [![Build Status](https://travis-ci.org/Automattic/_s.svg?branch=master)](https://travis-ci.org/Automattic/_s)
 
+requires https://github.com/elisabettac77/elicautilities plugin
+
+Simplified the codebase to make use of less templates and removed post formats that are now redundant, added correct code for portfolio and services shortcodes, leveraged theme columns variable in archive.php and added in archive.php a check to use the correct card template in the grid based on post-type (so that only ONE archive.php is needed and not three). Maintained portfolio.php and services.php to work as single.php so that a portfolio item or service can be accessed from its single page.
+
+meanwhile reworked the plugin list from this:
+
+- ClassicSEO (rankmath fork per la SEO)
+- Code Snippet DM (code syntax highlighter per condividere snippet di codice nei post del blog)
+- CookieYES (GDPR compliance)
+- DataBase for WPForms (per immagazzinare i messaggi ricevuti tramite WPForms Lite)
+- Hive Support (supporto clienti via ticket)
+- Newsletter, SMTP, Email marketing and Subscribe forms by Brevo (e-mail marketing & SMPT)
+- Popup Anything - A Marketing Popup (plugin per popup)
+- PDF Builder for WPForms (per allegare documenti pdf compilati coi dati del form alle conferme di WPForms)
+- Shield Security (plugin di sicurezza)
+- Switch to CkassicPress (plugin per la migrazione tra WP e CP e viceversa e il rollback di versione per ClassicPress)
+- UpdraftsPlus (backup e ripristino di file e database)
+- WP-Optmize (otttimizzazione)
+- WP Code Lite (inserimento di snippet di codice in header e footer)
+- WPForms Lite (Form di contatto, paid forms)
+- WP Statistics (statistiche)
+
+to this:
+
+- CookieYES (GDPR compliance)
+- WPForms Lite (Form di contatto, paid forms)
+- DataBase for WPForms (per immagazzinare i messaggi ricevuti tramite WPForms Lite)
+- PDF Builder for WPForms (per allegare documenti pdf compilati coi dati del form alle conferme di WPForms)
+- Shield Security (plugin di sicurezza)
+- UpdraftsPlus (backup e ripristino di file e database)
+- WP-Optmize (otttimizzazione)
+
+**I need to write custom code for a customer area providing the user a way to post/read/answer support tickets, and upload/download files - bonus points accessing their purchase and payment history that is stored in WPForms**
+
+- CPT for tickets and CPT for ticket responses (the ticket responses should be a modified version of the comments CPT) - tickets are only viewable/replyable by site owner and user who posted them
+- file management (the users should have permission to access media library, a custom folder or have a remote storage accessible from the dashboard like Google Drive) files uploaded and for download should be listed in the profile page
+**- Payment history retrieved from WPForms data?**
+**- PDF invoices retrieved from WPForms data?**
+
+Tickets CPT needs both TAGS and CATEGORIES for queues and categorization of topics and a custom taxonomy called PRIORITY that only allows 3 terms (high, medium, low) so that tickets can be correctly prioritized by the AGENT that is a custom user role that has access to ALL TICKETS to manage and reply to them. AGENT user role should not be the same of SITE ADMIN for security measures.
+agent should see in his profile all the ticket queues. it should have complete access to view user profiles (see all the files exchanged for example or the purchase history for commercial queries)
+user should see in his profile the post a ticket window, a list of files for download, uploaded files, and his own tickets.
+
+# about STYLES
+
+To define theme styles I will need to create a figma file with all the elements that need styling so that I can then translate that into the SCSS targeting the correct classes.
+this should come after writing the customer area and ticketing system because that also needs styling.
+
 _s
 ===
 
