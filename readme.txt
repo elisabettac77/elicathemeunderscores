@@ -14,7 +14,7 @@ A starter theme called elicathemeunderscores.
 
 == Description ==
 
-theme for elica website
+Tema per sito Elicabasato su Underscores
 
 == Installation ==
 
