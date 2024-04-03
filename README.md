@@ -1,6 +1,9 @@
 [![Build Status](https://travis-ci.org/Automattic/_s.svg?branch=master)](https://travis-ci.org/Automattic/_s)
 
-requires https://github.com/elisabettac77/elicautilities plugin
+Plugins that work with this theme:
+
+- https://github.com/elisabettac77/elicautilities
+- https://github.com/elisabettac77/ticketingelica/
 
 Simplified the codebase to make use of less templates and removed post formats that are now redundant, added correct code for portfolio and services shortcodes, leveraged theme columns variable in archive.php and added in archive.php a check to use the correct card template in the grid based on post-type (so that only ONE archive.php is needed and not three). Maintained portfolio.php and services.php to work as single.php so that a portfolio item or service can be accessed from its single page.
 
@@ -28,20 +31,13 @@ to this:
 - WPForms Lite (Form di contatto, paid forms)
 - DataBase for WPForms (per immagazzinare i messaggi ricevuti tramite WPForms Lite)
 - PDF Builder for WPForms (per allegare documenti pdf compilati coi dati del form alle conferme di WPForms)
-- Shield Security (plugin di sicurezza)
 - UpdraftsPlus (backup e ripristino di file e database)
-- WP-Optmize (otttimizzazione)
+AND MY CUSTOM PLUGINS
+- elicautilities
+- ticketingelica
 
-**I need to write custom code for a customer area providing the user a way to post/read/answer support tickets, and upload/download files - bonus points accessing their purchase and payment history that is stored in WPForms**
-
-- CPT for tickets and CPT for ticket responses (the ticket responses should be a modified version of the comments CPT) - tickets are only viewable/replyable by site owner and user who posted them
-- file management (the users should have permission to access media library, a custom folder or have a remote storage accessible from the dashboard like Google Drive) files uploaded and for download should be listed in the profile page
-**- Payment history retrieved from WPForms data?**
-**- PDF invoices retrieved from WPForms data?**
-
-Tickets CPT needs both TAGS and CATEGORIES for queues and categorization of topics and a custom taxonomy called PRIORITY that only allows 3 terms (high, medium, low) so that tickets can be correctly prioritized by the AGENT that is a custom user role that has access to ALL TICKETS to manage and reply to them. AGENT user role should not be the same of SITE ADMIN for security measures.
-agent should see in his profile all the ticket queues. it should have complete access to view user profiles (see all the files exchanged for example or the purchase history for commercial queries)
-user should see in his profile the post a ticket window, a list of files for download, uploaded files, and his own tickets.
+**Ticketing system is done (have to correct the priority logic a bit to simplify process and create all its templates in the theme but the main funtionality is ready and works)**
+the process will be as follows: customer purchases subscription and is redirected to a thank you page giving access to the ticketing area where they can post tickets. the ticketing system is equipped with custom user roles with custom cap to handle tickets and replies.
 
 # about STYLES
 
